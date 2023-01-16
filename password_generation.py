@@ -1,6 +1,5 @@
 import random
 
-
 letters = ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "A", "S", "D", "F", "G", "H", "J", "K", "L", "Z", "X",
            "C",
            "V", "B", "N", "M", "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "a", "s", "d", "f", "g", "h", "j",
@@ -36,7 +35,6 @@ def read_from_file():
     for line in rd_file:
         l_spis.append(line.rstrip(":\n"))
     rd_file.close()
-    print(l_spis)
     return l_spis
 
 
@@ -59,7 +57,6 @@ def enter():
 
 
 def search_password(l_serv_name):
-    #l_serv_name = l_serv_name + ":"
     return spis.index(l_serv_name) if l_serv_name in spis else -2
 
 
@@ -86,7 +83,6 @@ def writing_to_file(l_serv_name, pas_str):
         wr_file.write(spis[i])
         wr_file.write("\n")
     wr_file.write(l_serv_name.rstrip())
-    #wr_file.write(":")
     wr_file.write("\n")
     wr_file.write(pas_str.rstrip())
     wr_file.write("\n")
