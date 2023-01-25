@@ -1,0 +1,214 @@
+from tkinter import *
+import model as m
+class MainWindow:
+    def __init__(self, root):
+        self.root = root
+        self.back = Frame(root, background='white')
+        self.back.pack(expand=True, fill='both')
+
+        for r in range(1, 6): self.back.rowconfigure(index=r, weight=10)
+        self.back.rowconfigure(0, weight=2)
+        self.back.rowconfigure(6, weight=2)
+        for r in range(1, 4): self.back.columnconfigure(index=r, weight=15)
+        self.back.columnconfigure(index=0, weight=2)
+        self.back.columnconfigure(index=4, weight=2)
+
+        for r in range(0, 7, 6): 
+            for c in range(5):
+                Frame(self.back, background='grey').grid(row=r, column=c, sticky='nsew')
+        for r in range(1, 6):
+            for c in range(0, 5, 4):
+                Frame(self.back, background='grey').grid(row=r, column=c, sticky='nsew')
+
+        welcome = Frame(self.back, background='white')
+        welcome.grid(row=1, column=2, sticky='nsew')
+
+        Label(welcome, text='Выберите действие:', foreground='black', background='white', font=('Calibri', 14)).pack(side=BOTTOM, anchor=CENTER)
+        Label(welcome, text='Начало работы', foreground='black', background='white', font=('Calibri', 20)).pack(side=BOTTOM, anchor=CENTER)
+
+        buttons = Frame(self.back, background='white')
+        buttons.grid(row=2, column=2, sticky='nsew')
+        for r in range(2): buttons.rowconfigure(index=r, weight=1)
+        for r in range(3): buttons.columnconfigure(index=r, weight=1)
+        
+        Button(buttons, text='Создать новый пароль', font=('Calibri', 14), command=lambda: self.new_window('create')).grid(row=0, column=1)
+        Button(buttons, text='Найти сохранённый пароль', font=('Calibri', 14), command=lambda: self.new_window('find')).grid(row=1, column=1, sticky=N)
+
+    def new_window(self, command):
+        if command == 'create':
+            self.back.pack_forget()
+            CreateWindow(self.root)
+        elif command == 'find':
+            self.back.pack_forget()
+            FindWindow(self.root)
+        elif command == 'return_back':
+            self.back.pack_forget()
+            MainWindow(self.root)
+
+class CreateWindow:
+    def __init__(self, root):
+        self.root = root
+        self.back = Frame(root, background='lightgrey')
+        self.back.pack(expand=True, fill=BOTH)
+        
+        self.back.rowconfigure(index=0, weight=1)
+        self.back.rowconfigure(index=1, weight=40)
+        self.back.rowconfigure(index=2, weight=1)
+
+        self.back.columnconfigure(index=0, weight=1)
+        self.back.columnconfigure(index=1, weight=40)
+        self.back.columnconfigure(index=2, weight=1)
+
+
+        for r in range(0, 3, 2): 
+            for c in range(3):
+                Frame(self.back, background='grey').grid(row=r, column=c, sticky='nsew')
+        for r in range(3):
+            for c in range(0, 3, 2):
+                Frame(self.back, background='grey').grid(row=r, column=c, sticky='nsew')
+
+        self.widg = Frame(self.back, background='lightgrey')
+        self.widg.grid(column=1, row=1, sticky=NSEW)
+
+        services = StringVar()
+        login = StringVar()
+        len_password = StringVar()
+        new_pas = StringVar()
+        old_pas = StringVar()
+        lab_old_pas = StringVar()
+        Label(self.widg, background='lightgrey', text='Генерация', font=('Calibri', 20), justify=CENTER).place(anchor=CENTER, relx=0.5, rely=0.05)
+
+        Label(self.widg, background='lightgrey', text='Введите название сервиса:', font=('Calibri', 13), justify=CENTER).place(anchor=NW, relx=0.015, rely=0.1) # relwidth=0.4, relheight=0.1
+        Entry(self.widg, font=('Calibri', 14), textvariable=services).place(anchor=NW, relx=0.38, rely=0.1)
+        Label(self.widg, background='lightgrey', text='Логин', font=('Calibri', 13), justify=CENTER).place(anchor=NW, relx=0.015, rely=0.2)
+        Label(self.widg, background='lightgrey', text='(при необходимости)', font=('Calibri', 8), justify=CENTER).place(anchor=NW, relx=0.015, rely=0.25)
+        Entry(self.widg, font=('Calibri', 14), textvariable=login).place(anchor=NW, relx=0.38, rely=0.2)
+        Label(self.widg, background='lightgrey', text='Длина пароля', font=('Calibri', 13), justify=CENTER).place(anchor=NW, relx=0.015, rely=0.3)
+        Label(self.widg, background='lightgrey', text='(рекомендованная длина 12 символов)', font=('Calibri', 8), justify=CENTER).place(anchor=NW, relx=0.015, rely=0.35)
+        Entry(self.widg, font=('Calibri', 14), textvariable=len_password).place(anchor=NW, relx=0.38, rely=0.3)
+
+        #Button(self.widg, text='Сгенерировать', font=('Calibri', 14), command=lambda: self.gener(services, len_password, pas)).place(anchor=CENTER, relx=0.4, rely=0.4)
+        Button(self.widg, text='Сгенерировать', font=('Calibri', 14), command=lambda: self.verify(services, len_password, new_pas, old_pas, lab_old_pas)).place(anchor=CENTER, relx=0.4, rely=0.5)
+
+        Button(self.widg, text='Вернуться назад', font=('Calibri', 10), command=lambda: self.back_to_main('return_back')).place(relx=0.01, rely=0.94)
+
+        Label(self.widg, textvariable=new_pas, background='lightgrey').place(relx=0.4, rely=0.55)
+        Label(self.widg, textvariable=old_pas, background='lightgrey').place(relx=0.6 , rely=0.6)
+        Label(self.widg, textvariable=lab_old_pas).place(relx=0.6, rely=0.5)
+
+    def gener(self, l_services, len_password, l_new_pas):
+        l_new_pas.set(m.generator_pas(len_password.get()))
+    
+    def verify(self, l_services, l_len_password, l_pas, l_old_pas, lab_old_pas):
+        if (m.search_password(m.get_spis(), l_services.get())) == -1: #если сервис не существует
+            self.gener(l_services, l_len_password, l_pas)
+        else:                                                         #если сервис существует
+            txt_1 = "У вас уже имеется пароль от данного сервиса.  {}".format(l_services.get())
+            lab_old_pas.set(txt_1)
+            l_old_pas.set(m.get_spis()[m.search_password(m.get_spis(), l_services.get())])
+            
+            #Label(self.widg, text=m.get_spis()[m.search_password(m.get_spis(), l_services.get())]).place(relx=0.015, rely=0.73)
+
+        print([m.search_password(m.get_spis(), l_services.get())])
+
+
+
+
+    def back_to_main(self, command):
+        if command == 'return_back':
+            self.back.pack_forget()
+            MainWindow(self.root)
+
+        pass
+
+"""     for r in range(1, 6): self.back.rowconfigure(index=r, weight=15)
+        self.back.rowconfigure(0, weight=2)
+        self.back.rowconfigure(6, weight=2)
+        for r in range(1, 6): self.back.columnconfigure(index=r, weight=15)
+        self.back.columnconfigure(index=0, weight=2)
+        self.back.columnconfigure(index=6, weight=2)
+
+        for r in range(0, 7, 6): 
+            for c in range(7):
+                Frame(self.back, background='grey').grid(row=r, column=c, sticky='nsew')
+        for r in range(1, 7):
+            for c in range(0, 7, 6):
+                Frame(self.back, background='grey').grid(row=r, column=c, sticky='nsew')
+
+        Label(self.back, background='lightgrey', text='Генерация', font=('Calibri', 20), justify=CENTER).grid(row=1, column=2, sticky=NSEW)
+        
+        Frame(self.back, background='black').grid(row=1, column=1, sticky=NSEW)
+        forms = Frame(self.back, background='blue')
+        forms.grid(row=3, column=1, sticky=NSEW, columnspan=4)
+        serv = Frame(forms, background='lightgrey')
+        serv.grid(row=0, column=0)
+        log = Frame(forms, background='white')
+        log.grid(row=1, column=0, sticky=NSEW)
+        pas = Frame(forms, background='white')
+        pas.grid(row=2, column=0, sticky=NSEW)
+        services = StringVar()
+        login = StringVar()
+        len_password = StringVar()
+        
+        Label(serv, background='lightgrey', text='Введите название сервиса:', font=('Calibri', 14), justify=CENTER).grid(row=0, column=0, sticky=NW, pady=20)
+        Entry(serv, font=('Calibri', 14), textvariable=services).grid(row=0, column=1, sticky=NW, pady=20)
+        Label(log, background='lightgrey', text='Логин', font=('Calibri', 14), justify=CENTER).grid(row=0, column=0, sticky=NW)
+        #Label(forms, background='lightgrey', text='(при необходимости)', font=('Calibri', 8), justify=CENTER).grid(row=3, column=0, sticky=NW)
+        Entry(log, font=('Calibri', 14), textvariable=login).grid(row=0, column=1, sticky=NW)
+        Label(pas, background='lightgrey', text='Длина пароля', font=('Calibri', 14), justify=CENTER).grid(row=4, column=0, sticky=NW)
+        #Label(forms, background='lightgrey', text='(рекомендованная длина 12 символов)', font=('Calibri', 8), justify=CENTER).grid(row=5, column=0, sticky=NW)
+        Entry(pas, font=('Calibri', 14), textvariable=len_password).grid(row=4, column=1, sticky=NW)
+
+
+
+
+
+
+
+
+        Button(self.back, text='Вернуться назад', font=('Calibri', 10), command=lambda: self.new_window('return_back')).grid(row=5, column=1, sticky=SW, padx=10, pady=10)
+"""
+
+class FindWindow:
+    def __init__(self, root):
+        self.root = root
+        self.back = Frame(root, background='lightgrey')
+        self.back.pack(expand=True, fill=BOTH)
+        
+        for r in range(1, 6): self.back.rowconfigure(index=r, weight=15)
+        self.back.rowconfigure(0, weight=2)
+        self.back.rowconfigure(6, weight=2)
+        for r in range(1, 6): self.back.columnconfigure(index=r, weight=15)
+        self.back.columnconfigure(index=0, weight=2)
+        self.back.columnconfigure(index=6, weight=2)
+
+        for r in range(0, 7, 6): 
+            for c in range(7):
+                Frame(self.back, background='grey').grid(row=r, column=c, sticky='nsew')
+        for r in range(1, 7):
+            for c in range(0, 7, 6):
+                Frame(self.back, background='grey').grid(row=r, column=c, sticky='nsew')
+
+        Label(self.back, background='lightgrey', text='Поиск пароля', font=('Calibri', 20), justify=CENTER).grid(row=1, column=2, columnspan=3, rowspan=2)
+
+        entry = Frame(self.back, background='red') #lightgrey
+        entry.grid(row=2, column=1, sticky=NSEW, padx=7, columnspan=4, rowspan=3)
+        Label(entry, background='lightgrey', text='Введите название сервиса:', font=('Calibri', 16), justify=LEFT).pack(anchor=W)
+        pas = StringVar()
+        Entry(entry, textvariable=pas, font=('Calibri', 14)).pack(anchor=SW)
+        Button(entry, text='Искать', font=('Calibri', 14), command=lambda: self.find(pas)).pack(anchor=SE)
+
+        Button(self.back, text='Вернуться назад', font=('Calibri', 10), command=lambda: self.back_to_main('return_back')).grid(row=5, column=1, sticky=SW, padx=10, pady=10)
+ 
+    def find(self, pas):
+        result = Frame(self.back, background='lightgrey')
+        result.grid(row=3, column=1, sticky=NSEW, padx=5)
+        Label(result, text=m.get_spis()[m.search_password(m.get_spis(), pas.get())]).pack()
+        #print(pas)
+        
+    def back_to_main(self, command):
+        if command == 'return_back':
+            self.back.pack_forget()
+            MainWindow(self.root)
+
+        pass
