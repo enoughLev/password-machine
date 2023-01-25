@@ -182,6 +182,18 @@ class FindWindow:
         self.back.columnconfigure(index=0, weight=2)
         self.back.columnconfigure(index=6, weight=2)
 
+        for r in range(1, 6, 4):
+            for c in range(1, 6):
+                LabelFrame(self.back, background='grey', text='%d:%d' % (r, c)).grid(row=r, column=c, sticky='nsew')
+        for r in range(1, 6):
+            for c in range(1, 6, 4):
+                LabelFrame(self.back, background='grey', text='%d:%d' % (r, c)).grid(row=r, column=c, sticky='nsew')
+        
+        """LabelFrame(self.back, background='grey', text='1:3').grid(row=1, column=3, sticky='nsew')
+        LabelFrame(self.back, background='grey', text='1:5').grid(row=1, column=5, sticky='nsew')
+        LabelFrame(self.back, background='grey', text='3:1').grid(row=3, column=1, sticky='nsew')
+        LabelFrame(self.back, background='grey', text='5:1').grid(row=5, column=1, sticky='nsew')"""
+
         for r in range(0, 7, 6): 
             for c in range(7):
                 Frame(self.back, background='grey').grid(row=r, column=c, sticky='nsew')
@@ -189,26 +201,27 @@ class FindWindow:
             for c in range(0, 7, 6):
                 Frame(self.back, background='grey').grid(row=r, column=c, sticky='nsew')
 
-        Label(self.back, background='lightgrey', text='Поиск пароля', font=('Calibri', 20), justify=CENTER).grid(row=1, column=2, columnspan=3, rowspan=2)
+        Label(self.back, background='lightgrey', text='Поиск пароля', font=('Calibri', 20), justify=CENTER).grid(row=1, column=1, columnspan=5, rowspan=1)
 
-        entry = Frame(self.back, background='red') #lightgrey
-        entry.grid(row=2, column=1, sticky=NSEW, padx=7, columnspan=4, rowspan=3)
+        """entry = Frame(self.back, background='red') #lightgrey
+        entry.grid(row=2, column=1, sticky=NSEW, padx=7, columnspan=2)
         Label(entry, background='lightgrey', text='Введите название сервиса:', font=('Calibri', 16), justify=LEFT).pack(anchor=W)
         pas = StringVar()
         Entry(entry, textvariable=pas, font=('Calibri', 14)).pack(anchor=SW)
         Button(entry, text='Искать', font=('Calibri', 14), command=lambda: self.find(pas)).pack(anchor=SE)
 
-        Button(self.back, text='Вернуться назад', font=('Calibri', 10), command=lambda: self.back_to_main('return_back')).grid(row=5, column=1, sticky=SW, padx=10, pady=10)
- 
+        Button(self.back, text='Вернуться назад', font=('Calibri', 10), command=lambda: self.new_window('return_back')).grid(row=5, column=1, sticky=SW, padx=10, pady=10)
+"""
     def find(self, pas):
         result = Frame(self.back, background='lightgrey')
         result.grid(row=3, column=1, sticky=NSEW, padx=5)
         Label(result, text=m.get_spis()[m.search_password(m.get_spis(), pas.get())]).pack()
         #print(pas)
         
-    def back_to_main(self, command):
+    def new_window(self, command):
         if command == 'return_back':
             self.back.pack_forget()
             MainWindow(self.root)
 
         pass
+
