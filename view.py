@@ -88,23 +88,23 @@ class CreateWindow:
         Entry(self.widg, font=('Calibri', 14), textvariable=len_password).place(anchor=NW, relx=0.38, rely=0.3)
 
         #Button(self.widg, text='Сгенерировать', font=('Calibri', 14), command=lambda: self.gener(services, len_password, pas)).place(anchor=CENTER, relx=0.4, rely=0.4)
-        Button(self.widg, text='Сгенерировать', font=('Calibri', 14), command=lambda: self.verify(services, len_password, new_pas, old_pas, lab_old_pas)).place(anchor=CENTER, relx=0.4, rely=0.5)
+        Button(self.widg, text='Сгенерировать', font=('Calibri', 14), command=lambda: self.verify(services, len_password, new_pas, old_pas, warning)).place(anchor=CENTER, relx=0.4, rely=0.5)
 
         Button(self.widg, text='Вернуться назад', font=('Calibri', 10), command=lambda: self.back_to_main('return_back')).place(relx=0.01, rely=0.94)
 
         Label(self.widg, textvariable=new_pas, background='lightgrey').place(relx=0.4, rely=0.55)
         Label(self.widg, textvariable=old_pas, background='lightgrey').place(relx=0.6 , rely=0.6)
-        Label(self.widg, textvariable=lab_old_pas, foreground='red', background='lightgrey', font=('Calibri', 12, 'italic'), justify=RIGHT).place(relx=0.68, rely=0.1)
         
+        txt_1 = "У вас уже имеется пароль \nот данного сервиса! \nЕсли вы хотите создать новый \nпароль для данного сервиса, то \nподтвердите выбор. \nВ случае, если вам необходимо \nузнать существющий пароль \nот сервиса, то проведите \nпоиск пароля по сервису из \nглавного меню.\n{}".format(services.get())
+        warning = Label(self.widg, text=txt_1, foreground='red', background='lightgrey', font=('Calibri', 12, 'italic'), justify=LEFT, relief=SOLID, width=29, border=1)
+
     def gener(self, len_password, l_new_pas):
         l_new_pas.set(m.generator_pas(len_password.get()))
     
-    def verify(self, l_services, l_len_password, l_pas, l_old_pas, lab_old_pas):
+    def verify(self, l_services, l_len_password, l_pas, l_old_pas, warning):
         if (m.search_password(m.get_spis(), l_services.get())): #если сервис существует
-            txt_1 = "У вас уже имеется пароль от данного сервиса.  {}".format(l_services.get())
-            lab_old_pas.set(txt_1)
             l_old_pas.set(m.get_spis()[m.search_password(m.get_spis(), l_services.get())])
-            
+            warning.place(relx=0.68, rely=0.1)
             #Label(self.widg, text=m.get_spis()[m.search_password(m.get_spis(), l_services.get())]).place(relx=0.015, rely=0.73)
         else:                                                         #если сервис не существует
             self.gener(l_len_password, l_pas)
