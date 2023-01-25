@@ -96,18 +96,18 @@ class CreateWindow:
         Label(self.widg, textvariable=old_pas, background='lightgrey').place(relx=0.6 , rely=0.6)
         Label(self.widg, textvariable=lab_old_pas, foreground='red', background='lightgrey', font=('Calibri', 12, 'italic'), justify=RIGHT).place(relx=0.68, rely=0.1)
         
-    def gener(self, l_services, len_password, l_new_pas):
+    def gener(self, len_password, l_new_pas):
         l_new_pas.set(m.generator_pas(len_password.get()))
     
     def verify(self, l_services, l_len_password, l_pas, l_old_pas, lab_old_pas):
-        if (m.search_password(m.get_spis(), l_services.get())) == -1: #если сервис не существует
-            self.gener(l_services, l_len_password, l_pas)
-        else:                                                         #если сервис существует
-            txt_1 = "У вас уже имеется пароль \nот данного сервиса! \nЕсли вы хотите создать новый \nпароль для данного сервиса, то \nподтвердите выбор. \nВ случае, если вам необходимо \nузнать существющий пароль \nот сервиса, то проведите \nпоиск пароля по сервису из \nглавного меню.\n{}".format(l_services.get())
+        if (m.search_password(m.get_spis(), l_services.get())): #если сервис существует
+            txt_1 = "У вас уже имеется пароль от данного сервиса.  {}".format(l_services.get())
             lab_old_pas.set(txt_1)
             l_old_pas.set(m.get_spis()[m.search_password(m.get_spis(), l_services.get())])
             
             #Label(self.widg, text=m.get_spis()[m.search_password(m.get_spis(), l_services.get())]).place(relx=0.015, rely=0.73)
+        else:                                                         #если сервис не существует
+            self.gener(l_len_password, l_pas)
 
         print([m.search_password(m.get_spis(), l_services.get())])
 
