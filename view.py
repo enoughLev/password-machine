@@ -96,7 +96,6 @@ class CreateWindow:
         Label(self.widg, textvariable=old_pas, background='lightgrey').place(relx=0.6 , rely=0.6)
         Label(self.widg, textvariable=lab_old_pas).place(relx=0.6, rely=0.5)
         
-        Button(self.widg, text='Сгенерировать', font=('Calibri', 14), command=lambda: self.verify(services, len_password, new_pas, old_pas, lab_old_pas)).place(anchor=CENTER, relx=0.4, rely=0.5)
     def gener(self, l_services, len_password, l_new_pas):
         l_new_pas.set(m.generator_pas(len_password.get()))
     
