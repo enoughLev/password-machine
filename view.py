@@ -76,6 +76,8 @@ class CreateWindow:
         new_pas = StringVar()
         old_pas = StringVar()
         lab_old_pas = StringVar()
+        services_text = StringVar()
+        flag = False
         Label(self.widg, background='lightgrey', text='Генерация', font=('Calibri', 20), justify=CENTER).place(anchor=CENTER, relx=0.5, rely=0.05)
 
         Label(self.widg, background='lightgrey', text='Введите название сервиса:', font=('Calibri', 13), justify=CENTER).place(anchor=NW, relx=0.015, rely=0.1) # relwidth=0.4, relheight=0.1
@@ -88,15 +90,19 @@ class CreateWindow:
         Entry(self.widg, font=('Calibri', 14), textvariable=len_password).place(anchor=NW, relx=0.38, rely=0.3)
 
         #Button(self.widg, text='Сгенерировать', font=('Calibri', 14), command=lambda: self.gener(services, len_password, pas)).place(anchor=CENTER, relx=0.4, rely=0.4)
-        Button(self.widg, text='Сгенерировать', font=('Calibri', 14), command=lambda: self.verify(services, len_password, new_pas, old_pas, warning)).place(anchor=CENTER, relx=0.4, rely=0.5)
+        Button(self.widg, text='Сгенерировать', font=('Calibri', 14), command=lambda: self.verify(services, len_password, new_pas, old_pas, flag)).place(anchor=CENTER, relx=0.4, rely=0.5)
 
         Button(self.widg, text='Вернуться назад', font=('Calibri', 10), command=lambda: self.back_to_main('return_back')).place(relx=0.01, rely=0.94)
 
-        Label(self.widg, textvariable=new_pas, background='lightgrey').place(relx=0.4, rely=0.55)
+        Label(self.widg, textvariable=new_pas, background='lightgrey', font=('Calibri', 12, 'italic'), justify=LEFT).place(relx=0.15, rely=0.65)
         Label(self.widg, textvariable=old_pas, background='lightgrey').place(relx=0.6 , rely=0.6)
         
-        txt_1 = "У вас уже имеется пароль \nот данного сервиса! \nЕсли вы хотите создать новый \nпароль для данного сервиса, то \nподтвердите выбор. \nВ случае, если вам необходимо \nузнать существющий пароль \nот сервиса, то проведите \nпоиск пароля по сервису из \nглавного меню.\n{}".format(services.get())
-        warning = Label(self.widg, text=txt_1, foreground='red', background='lightgrey', font=('Calibri', 12, 'italic'), justify=LEFT, width=29, height=11, relief=GROOVE, border=2)
+        txt_warning = "У вас уже имеется пароль \nот данного сервиса! \nЕсли вы хотите создать новый \nпароль для данного сервиса, то \nподтвердите выбор. \nВ случае, если вам необходимо \nузнать существющий пароль \nот сервиса, то проведите \nпоиск пароля по сервису из \nглавного меню.\n{}".format(services.get())
+        
+        global label_warning
+        global label_services
+        label_warning = Label(self.widg, text=txt_warning, foreground='red', background='lightgrey', font=('Calibri', 12, 'italic'), justify=LEFT, width=29, height=11, relief=GROOVE, border=2)
+        label_services = Label(self.widg, textvariable=services, foreground='black', background='lightgrey', font=('Calibri', 12, 'italic'), justify=LEFT)
 
         def callback_function(*args) :
             meters.set('blue')
@@ -111,21 +117,29 @@ class CreateWindow:
         root.bind('<KeyPress>', callback_function)
 
         """root.bind('<KeyPress>', callback_function_1)"""
-
+        
+    def place(self, flag):
+        if flag:
+            label_warning.place(relx=0.665, rely=0.1)
+        elif flag == False:
+            label_services.place(relx=0.15, rely=0.6)
+            Label(self.widg, text='Ваш сервис:', background='lightgrey', font=('Calibri', 13), justify=CENTER).place(relx=0.015, rely=0.6)
+            Label(self.widg, text='Ваш пароль:', background='lightgrey', font=('Calibri', 13), justify=CENTER).place(relx=0.015, rely=0.65)
 
     def gener(self, len_password, l_new_pas):
         l_new_pas.set(m.generator_pas(len_password.get()))
     
-    def verify(self, l_services, l_len_password, l_pas, l_old_pas, warning):
-        if (m.search_password(m.get_spis(), l_services.get())): #если сервис существует
+    def verify(self, l_services, l_len_password, l_pas, l_old_pas, flag):
+        if (m.search_password(m.get_spis(), l_services.get())):             #если сервис существует
             l_old_pas.set(m.get_spis()[m.search_password(m.get_spis(), l_services.get())])
-            warning.place(relx=0.665, rely=0.1)
-            
-            #Label(self.widg, text=m.get_spis()[m.search_password(m.get_spis(), l_services.get())]).place(relx=0.015, rely=0.73)
-        else:                                                         #если сервис не существует
+            flag = True
+            self.place(flag)
+            #label_warning.place(relx=0.665, rely=0.1)
+            print([m.search_password(m.get_spis(), l_services.get())])            
+        else:                                                               #если сервис НЕ существует
             self.gener(l_len_password, l_pas)
-
-        print([m.search_password(m.get_spis(), l_services.get())])
+            self.place(flag)
+            
 
 
 

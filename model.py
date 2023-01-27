@@ -5,7 +5,8 @@ def get_spis():
     return read_from_file()
 
 
-def generator_pas(l_length: int):
+def generator_pas(l_length): #l_length: int - не работает в строке 27. Ругается, что l_length не является INT
+    l_length = int(l_length) 
     def verif(l_password: str):
         ch_under = "_"  # символ "_"
         ch_mins = "-"  # символ "-"
@@ -21,10 +22,14 @@ def generator_pas(l_length: int):
            "l", "z", "x", "c", "v", "b", "n", "m", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-",
            "_"]  # список всех символов]
     while True:
-        gened_pas: str
-        for i in range(l_length): gened_pas += random.choice(letters)
-        if verif(gened_pas): continue
-        else: return gened_pas
+        #gened_pas: str - не работает в строке 28. Говорит, что не работает без объявления переменной
+        gened_pas = ""
+        for i in range(l_length): 
+            gened_pas += random.choice(letters)
+        if verif(gened_pas): 
+            continue
+        else: 
+            return gened_pas
 
 
 def search_password(spis: list, l_serv_name: str):
