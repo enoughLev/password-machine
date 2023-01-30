@@ -78,10 +78,17 @@ class CreateWindow:
         lab_old_pas = StringVar()
         services_text = StringVar()
         flag = False
+        def back_to_main(command):
+            if command == 'return_back':
+                self.back.pack_forget()
+                MainWindow(root)
+            pass
+        
         Label(self.widg, background='lightgrey', text='Генерация', font=('Calibri', 20), justify=CENTER).place(anchor=CENTER, relx=0.5, rely=0.05)
 
         Label(self.widg, background='lightgrey', text='Введите название сервиса:', font=('Calibri', 13), justify=CENTER).place(anchor=NW, relx=0.015, rely=0.1) # relwidth=0.4, relheight=0.1
-        Entry(self.widg, font=('Calibri', 14), textvariable=services).place(anchor=NW, relx=0.38, rely=0.1)
+        ser = Entry(self.widg, font=('Calibri', 14), textvariable=services)
+        ser.place(anchor=NW, relx=0.38, rely=0.1)
         Label(self.widg, background='lightgrey', text='Логин', font=('Calibri', 13), justify=CENTER).place(anchor=NW, relx=0.015, rely=0.2)
         Label(self.widg, background='lightgrey', text='(при необходимости)', font=('Calibri', 8), justify=CENTER).place(anchor=NW, relx=0.015, rely=0.25)
         Entry(self.widg, font=('Calibri', 14), textvariable=login).place(anchor=NW, relx=0.38, rely=0.2)
@@ -90,9 +97,9 @@ class CreateWindow:
         Entry(self.widg, font=('Calibri', 14), textvariable=len_password).place(anchor=NW, relx=0.38, rely=0.3)
 
         #Button(self.widg, text='Сгенерировать', font=('Calibri', 14), command=lambda: self.gener(services, len_password, pas)).place(anchor=CENTER, relx=0.4, rely=0.4)
-        Button(self.widg, text='Сгенерировать', font=('Calibri', 14), command=lambda: self.verify(services, len_password, new_pas, old_pas, flag)).place(anchor=CENTER, relx=0.4, rely=0.5)
+        Button(self.widg, text='Сгенерировать', font=('Calibri', 14), command=lambda: self.verify(services, len_password, new_pas, old_pas)).place(anchor=CENTER, relx=0.4, rely=0.5)
 
-        Button(self.widg, text='Вернуться назад', font=('Calibri', 10), command=lambda: self.back_to_main('return_back')).place(relx=0.01, rely=0.94)
+        Button(self.widg, text='Вернуться назад', font=('Calibri', 10), command=lambda: back_to_main('return_back')).place(relx=0.01, rely=0.94)
 
         Label(self.widg, textvariable=new_pas, background='lightgrey', font=('Calibri', 12, 'italic'), justify=LEFT).place(relx=0.15, rely=0.65)
         Label(self.widg, textvariable=old_pas, background='lightgrey').place(relx=0.6 , rely=0.6)
@@ -104,24 +111,31 @@ class CreateWindow:
         label_warning = Label(self.widg, text=txt_warning, foreground='red', background='lightgrey', font=('Calibri', 12, 'italic'), justify=LEFT, width=29, height=11, relief=GROOVE, border=2)
         label_services = Label(self.widg, textvariable=services, foreground='black', background='lightgrey', font=('Calibri', 12, 'italic'), justify=LEFT)
 
-        def callback_function(*args) :
-            meters.set('blue')
         
         """def callback_function_1(*args) :
             txt_1 = ''
             return txt_1"""
+        def callback_function(*args) :
+            label_warning.place_forget()
             
+        def enter_press(*args):
+            self.verify(services, len_password, new_pas, old_pas)
+
         meters = StringVar()
         Label(self.widg, textvariable=meters, background='#E9D66B').grid(column=2, row=2, sticky=(W, E))
+        num = '123'
+        #ser.bind('<KeyPress>', callback_function)
+        root.bind('<Return>', enter_press)
 
-        root.bind('<KeyPress>', callback_function)
-
+        
         """root.bind('<KeyPress>', callback_function_1)"""
         
-    def place(self, flag):
-        if flag:
+    
+    def place(self):
+        if self.flag:
             label_warning.place(relx=0.665, rely=0.1)
-        elif flag == False:
+        elif self.flag == False:
+            label_warning.place_forget()
             label_services.place(relx=0.15, rely=0.6)
             Label(self.widg, text='Ваш сервис:', background='lightgrey', font=('Calibri', 13), justify=CENTER).place(relx=0.015, rely=0.6)
             Label(self.widg, text='Ваш пароль:', background='lightgrey', font=('Calibri', 13), justify=CENTER).place(relx=0.015, rely=0.65)
@@ -129,27 +143,21 @@ class CreateWindow:
     def gener(self, len_password, l_new_pas):
         l_new_pas.set(m.generator_pas(len_password.get()))
     
-    def verify(self, l_services, l_len_password, l_pas, l_old_pas, flag):
+    def verify(self, l_services, l_len_password, l_pas, l_old_pas):
         if (m.search_password(m.get_spis(), l_services.get())):             #если сервис существует
             l_old_pas.set(m.get_spis()[m.search_password(m.get_spis(), l_services.get())])
-            flag = True
-            self.place(flag)
+            self.flag = True
+            self.place()
             #label_warning.place(relx=0.665, rely=0.1)
             print([m.search_password(m.get_spis(), l_services.get())])            
         else:                                                               #если сервис НЕ существует
             self.gener(l_len_password, l_pas)
-            self.place(flag)
+            self.place()
             
 
 
 
 
-    def back_to_main(self, command):
-        if command == 'return_back':
-            self.back.pack_forget()
-            MainWindow(self.root)
-
-        pass
 
 """     for r in range(1, 6): self.back.rowconfigure(index=r, weight=15)
         self.back.rowconfigure(0, weight=2)
